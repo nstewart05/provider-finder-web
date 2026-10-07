@@ -2,7 +2,13 @@ from fastapi import FastAPI, HTTPException
 
 from tmdbsearch import search, get_providers
 
+from pydantic import BaseModel
+
+from database import create_tables, add_to_watchlist, get_watchlist, remove_from_watchlist
+
 app = FastAPI()
+
+create_tables() #makes sure the tables exist
 
 
 @app.get("/")
@@ -46,3 +52,38 @@ def availability(media_type: str, tmdb_id: int, country: str = "US"):
         cleaned[kind] = names
 
     return {"country": country, "providers": cleaned}
+
+class WatchlistItem(BaseModel):
+    tmdb_id: int
+    media_type: str
+    title: str
+    year: str = ""
+
+
+@app.post("/watchlist", status_code=201)
+def save_to_watchlist(item: WatchlistItem):
+    if item.media_type not in ("movie", "tv"):
+        raise HTTPException(status_code=400, detail="media_type must be 'movie' or 'tv'")
+
+    added = add_to_watchlist(item.tmdb_id, item.media_type, item.title, item.year)
+    if not added:
+        raise HTTPException(status_code=409, detail="Already in your watchlist")
+    return {"message": "Added to watchlist"}
+
+
+@app.get("/watchlist")
+def list_watchlist():
+    return get_watchlist()
+
+#POST vs GET
+# GET asks for data and the details travel in the address
+#POST sends data to the server to be stored
+# the details travel in the body of the request which is hidden from the address
+#Saving a title is a change, so it's a POST.
+
+@app.delete("/watchlist/{item_id}")
+def delete_watchlist_item(item_id: int):
+    removed = remove_from_watchlist(item_id)
+    if not removed:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return {"message": "Removed from watchlist"}
