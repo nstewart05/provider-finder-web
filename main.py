@@ -4,12 +4,13 @@ from tmdbsearch import search, get_providers
 
 from pydantic import BaseModel
 
-from database import create_tables, add_to_watchlist, get_watchlist, remove_from_watchlist
+from database import create_tables, add_to_watchlist, get_watchlist, remove_from_watchlist, get_cached, set_cached, delete_old_cache
 
 app = FastAPI()
 
 create_tables() #makes sure the tables exist
 
+delete_old_cache(7)
 
 @app.get("/")
 def home():
@@ -21,6 +22,13 @@ def search_titles(q: str):
     if not q.strip():
         return []
 
+    cache_key = f"search:{q.strip().lower()}"
+    cached = get_cached(cache_key, 1440) #max age is 1440 minutes which is 24 hours
+    if cached is not None: #this makes it so if there is a match it returns early and doesnt have to go to tmdb
+        #print("cache hit:", cache_key)
+        return cached
+
+    #print("cache miss:", cache_key)
     results = search(q)
 
     shows = []
@@ -33,6 +41,8 @@ def search_titles(q: str):
                 "title": item.get("title") or item.get("name"),
                 "year": year[:4],
             })
+
+    set_cached(cache_key, shows)
     return shows
 
 
@@ -42,6 +52,14 @@ def availability(media_type: str, tmdb_id: int, country: str = "US"):
         raise HTTPException(status_code=400, detail="media_type must be 'movie' or 'tv'")
 
     country = country.strip().upper()
+
+    cache_key = f"providers:{media_type}:{tmdb_id}:{country}"
+    cached = get_cached(cache_key, 360)
+    if cached is not None:
+        #print("cache hit:", cache_key)
+        return cached
+
+    #print("cache miss:", cache_key)
     providers = get_providers(media_type, tmdb_id, country)
 
     cleaned = {}
@@ -51,7 +69,9 @@ def availability(media_type: str, tmdb_id: int, country: str = "US"):
             names.append(provider["provider_name"])
         cleaned[kind] = names
 
-    return {"country": country, "providers": cleaned}
+    result = {"country": country, "providers": cleaned}
+    set_cached(cache_key, result)
+    return result
 
 class WatchlistItem(BaseModel):
     tmdb_id: int
