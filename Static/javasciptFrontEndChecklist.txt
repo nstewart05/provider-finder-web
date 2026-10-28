@@ -1,0 +1,22 @@
+The search function
+ 1. Find the elements at the top of script.js with document.querySelector("#id")
+    stored in const variables: input box, country dropdown, search button, results div
+ 2. Listen for the click with addEventListener("click", searchTitles), passing the 
+    function name without parentheses
+ 3. Read the input inside the function: .value.trim() on the input element. Return 
+    early if it's empty
+ 4. Call the backend with await fetch and encodeURIComponent, then await
+    response.json(). The function must be async
+ 5. Clear old results with .replaceChildren() on the results div
+ 6. Handle no results: if the array's .length is 0, show a message
+ 7. Show each result: loop with for (const item of results), document.createElement, 
+    set .textContent, .append to the results
+
+After these Steps: 
+ 1. Wrap the fetch in try/catch and check response.ok
+ 2. Run the search when the user presses Enter in the input box
+ 3. Clicking a result calls /availability with media_type, tmdb_id and the dropdown's .value
+ 4. Show where the title streams (flatrate, free, ads, rent, buy)
+ 5. "Add to watchlist" button that sends a POST to /watchlist
+ 6. A watchlist view that calls GET /watchlist
+ 7. Footer with TMDB and JustWatch attribution

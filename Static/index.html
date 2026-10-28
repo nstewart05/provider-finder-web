@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <a href="index.html" class="logo">PF</a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="watchlist.html">Watchlist</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="header-box">
+        <h1>PROVIDER FINDER</h1>
+        <p>Find Where Movies And TV Are Streaming Based On Your Region</p>
+    </section>
+
+    <section>
+        <div class="search-box">
+            <div class="row">
+                <label for="country">Region: </label>
+                <select id="country">
+                    <option value="US" selected>United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="IN">India</option>
+                    <option value="JP">Japan</option>
+                </select>
+
+                <input type="text" id="input-box" placeholder="Search Any Movie" autocomplete="off">
+                <button id="search-button" class="button"><span>Search</span></button>
+            </div>
+        </div>
+
+        <div id="results"></div>
+
+        </section>
+
+    <script src="index.js"></script>
+</body>
+</html>3
