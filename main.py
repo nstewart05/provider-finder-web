@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 from database import create_tables, add_to_watchlist, get_watchlist, remove_from_watchlist, get_cached, set_cached, delete_old_cache
 
+from fastapi.staticfiles import StaticFiles
+
 app = FastAPI()
 
 create_tables() #makes sure the tables exist
@@ -107,3 +109,6 @@ def delete_watchlist_item(item_id: int):
     if not removed:
         raise HTTPException(status_code=404, detail="Item not found")
     return {"message": "Removed from watchlist"}
+
+
+app.mount("/app", StaticFiles(directory="static", html=True), name="static") #this is so there are no CORS problems and fastapi/frontedn run on the same server
