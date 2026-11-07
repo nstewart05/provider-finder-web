@@ -8,6 +8,9 @@
 body {
     background: #262a2f;
     color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 .navbar {
     display: flex;
@@ -189,4 +192,30 @@ input {
     margin-bottom: 4px;
     font-size: 15px;
     color: #555;
+}
+
+#results,
+#watchlist-list {
+    width: 90%;
+    max-width: 800px;
+    margin: 24px auto;
+    color: #fff;
+}
+.site-footer {
+    margin-top: auto;
+    padding: 60px 24px 24px;
+    text-align: center;
+}
+
+.site-footer p {
+    font-size: 13px;
+    font-weight: 400;
+    color: #9aa0a6;
+}
+
+.empty-message {
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    padding: 24px;
 }
